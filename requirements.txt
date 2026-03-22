@@ -1,4 +1,5 @@
 flask
+requests
+google-genai
 transformers
-sentence-transformers
-gunicorn
+torch
