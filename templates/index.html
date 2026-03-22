@@ -1,0 +1,222 @@
+{% extends 'layout.html' %}
+{% block content %}
+<style>
+    .hero {
+        min-height: calc(100vh - 62px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 1.5rem;
+    }
+
+    .search-card {
+        width: 100%;
+        max-width: 640px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 2.5rem 2.5rem 2rem;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 8px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border);
+        animation: slideUp 0.5s cubic-bezier(.4, 0, .2, 1) both;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(28px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .card-heading {
+        margin-bottom: 0.35rem;
+        font-size: 1.65rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .card-sub {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+    }
+
+    .field-group {
+        margin-bottom: 1.1rem;
+    }
+
+    label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        margin-bottom: 0.45rem;
+    }
+
+    input[type="text"],
+    select {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: var(--text);
+        font-family: 'Inter', sans-serif;
+        font-size: 0.97rem;
+        padding: 0.7rem 1rem;
+        outline: none;
+        transition: border-color var(--transition), box-shadow var(--transition);
+        -webkit-appearance: none;
+    }
+
+    input[type="text"]::placeholder {
+        color: var(--text-muted);
+    }
+
+    input[type="text"]:focus,
+    select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    select option {
+        background: #131829;
+    }
+
+    .row-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .btn-search {
+        width: 100%;
+        margin-top: 0.5rem;
+        padding: 0.85rem;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        letter-spacing: 0.01em;
+        transition: opacity var(--transition), transform var(--transition), box-shadow var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-search:hover {
+        opacity: 0.92;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 24px var(--accent-glow);
+    }
+
+    .btn-search:active {
+        transform: translateY(0);
+    }
+
+    .btn-search.loading .btn-text {
+        opacity: 0;
+    }
+
+    .btn-search.loading::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    @keyframes spin {
+        to {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
+    }
+
+    .hint {
+        margin-top: 1.25rem;
+        text-align: center;
+        font-size: 0.78rem;
+        color: var(--text-muted);
+    }
+
+    .hint kbd {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 1px 6px;
+        font-family: 'Inter', sans-serif;
+    }
+</style>
+
+<div class="hero">
+    <div class="search-card">
+        <h1 class="card-heading">Find Research Papers</h1>
+        <p class="card-sub">Search millions of papers on arXiv — physics, maths, CS, and more.</p>
+
+        <form id="search-form" action="/search" method="POST">
+            <div class="field-group">
+                <label for="query">Search Query</label>
+                <input type="text" id="query" name="query" placeholder="e.g. transformer attention mechanism" required
+                    autocomplete="off">
+            </div>
+
+            <div class="row-2">
+                <div class="field-group">
+                    <label for="search_field">Search In</label>
+                    <select id="search_field" name="search_field">
+                        <option value="all">All Fields</option>
+                        <option value="ti">Title</option>
+                        <option value="au">Author</option>
+                        <option value="abs">Abstract</option>
+                        <option value="jr">Journal Ref</option>
+                        <option value="doi">DOI</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label for="max_results">Results</label>
+                    <select id="max_results" name="max_results">
+                        <option value="5">5 papers</option>
+                        <option value="10" selected>10 papers</option>
+                        <option value="20">20 papers</option>
+                        <option value="50">50 papers</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-search" id="search-btn">
+                <span class="btn-text">Search Papers</span>
+            </button>
+        </form>
+        <p class="hint">Press <kbd>/</kbd> to focus the search box</p>
+    </div>
+</div>
+
+<script>
+    // Focus query box on '/' keydown
+    document.addEventListener('keydown', e => {
+        if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT') {
+            e.preventDefault();
+            document.getElementById('query').focus();
+        }
+    });
+    // Loading spinner on submit
+    document.getElementById('search-form').addEventListener('submit', () => {
+        document.getElementById('search-btn').classList.add('loading');
+    });
+</script>
+{% endblock %}

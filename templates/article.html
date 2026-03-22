@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Article</title>
+</head>
+<body>
+    <button onclick="history.back()">Back</button>
+    <div>
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% else %}
+            <pre>{{ content }}</pre>
+        {% endif %}
+    </div>
+    <button onclick="history.back()">Back</button>
+</body>
+</html>
