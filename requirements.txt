@@ -3,3 +3,4 @@ requests
 google-genai
 transformers
 torch
+python-dotenv
