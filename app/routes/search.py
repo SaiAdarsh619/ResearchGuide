@@ -1,5 +1,6 @@
 from flask import Blueprint, request, render_template
 from utils import build_search_query, parse_arxiv_response
+import requests
 
 search_blueprint = Blueprint("search", __name__)
 
