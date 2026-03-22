@@ -4,5 +4,3 @@ google-genai
 transformers
 torch
 python-dotenv
-os
-xml
