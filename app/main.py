@@ -12,6 +12,7 @@ app.register_blueprint(summarize_blueprint, url_prefix="/summarize")
 def index():
     return render_template("index.html")
 
+PORT = os.getenv("PORT") or 5000
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    app.run(host="0.0.0.0", port=PORT, debug=False)
